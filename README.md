@@ -20,22 +20,21 @@ The model maps geometric structure inputs to electromagnetic spectral responses 
 
 ```bash
 ML_MM_Benchmark/
-├── data/                       # Contains ADM dataset
+├── data/                       
 │   └── ADM/
-│       ├── data_x.csv         # Geometric parameters
-│       ├── data_y.csv         # Spectral responses
+│       ├── data_x.csv        
+│       ├── data_y.csv       
 │       └── testset/
 ├── models/
 │   └── MLP/
-│       ├── train.py           # MLP training script
-│       ├── evaluate.py        # Evaluation logic
-│       ├── generate_all_eval_plots.py  # Custom evaluation plotting
-│       ├── model_maker.py     # Model architecture (Forward MLP)
-│       ├── class_wrapper.py   # Wrapper for model evaluation
-│       ├── parameters.py      # Default hyperparameters
+│       ├── train.py           
+│       ├── evaluate.py        
+│       ├── generate_all_eval_plots.py 
+│       ├── model_maker.py    
+│       ├── class_wrapper.py   
+│       ├── parameters.py      
 │       └── models/
 │           └── MLP/20250728_010501  # Trained checkpoint
-├── evaluation_results/        # Evaluation output and plots
-├── images/                    # Paper visualizations and architecture
+├── evaluation_results/                          
 ├── README.md
 └── .gitignore
