@@ -1,68 +1,102 @@
-# MLP Forward Model Replication on ADM Dataset
-
-This repository contains a clean replication of the **MLP forward model** described in the paper:  
-[Benchmarking Data-driven Surrogate Simulators for Artificial Electromagnetic Materials](https://openreview.net/pdf?id=-or413Lh_aF)
-
-The goal is to predict electromagnetic spectral responses from geometric structures for **Artificial Electromagnetic Materials (AEMs)** using the **ADM dataset**.
 
 ---
 
-## Code Attribution
+## Model & Training Overview
 
-This work is based on the official benchmark repository:  
-➡ [https://github.com/yangdeng-EML/ML_MM_Benchmark](https://github.com/yangdeng-EML/ML_MM_Benchmark)
+### 🔧 Input/Output
+- **Inputs (`data_g.csv`)**: 14-dimensional geometry vector
+- **Outputs (`data_s.csv`)**: 2001-dimensional spectral response vector (S-parameters)
 
-All training, evaluation, and plotting pipelines were adapted and cleaned for clarity and reuse.
+### MLP Architecture
+- 10 hidden layers with 2000 neurons each
+- Activation: **GELU**
+- Regularization: **Dropout (0.2)** and **BatchNorm**
+- Skip Connections: Enabled from 2nd layer onward
+- Trainable Parameters: **40M+**
+
+
+### Full Model Architecture
+```python
+MLP(
+  (dropout): Dropout(p=0.2, inplace=False)
+  (activation): GELU(approximate='none')
+  (linears): ModuleList(
+    (0): Linear(in_features=14, out_features=2000, bias=True)
+    (1-9): 9 x Linear(in_features=2000, out_features=2000, bias=True)
+    (10): Linear(in_features=2000, out_features=2001, bias=True)
+  )
+  (bns): ModuleList(
+    (0-9): 10 x BatchNorm1d(2000, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  )
+)
+
+| Setting              | Value         |
+|---------------------|---------------|
+| Optimizer           | Adam          |
+| Learning Rate       | 1e-3          |
+| Batch Size          | 256           |
+| Weight Decay        | 1e-5          |
+| LR Decay (plateau)  | 0.5           |
+| Max Epochs          | 500           |
+| Early Stopping Patience | 50       |
 
 ---
 
-## What's Included
 
-- Trained MLP model on ADM (`models/MLP/models/MLP/20250728_010501`)
-- Modular training and evaluation scripts (`train.py`, `evaluate.py`)
-- Visualizations: spectrum comparison, MAE, MSE plots
-- Post-evaluation analysis script (`plotsAnalysis.py`)
-- Auto-generated evaluation results in `evaluation_results/`
+
+![Training Curve](plots/training_curve.png)
+
+- **Observation**: Validation loss converges below training loss.
+- **Why?** Dropout and batch normalization are only active during training, leading to slightly noisier train loss. Evaluation is deterministic → more stable validation loss.
+- Training converged with early stopping after ~100 epochs.
 
 ---
 
-## Folder Structure
 
-```bash
-replicate_mlp_amd_forward/
-├── data/
-│   ├── __init__.py
-│   └── loader.py
-├── models/
-│   └── MLP/
-│       ├── class_wrapper.py
-│       ├── evaluate.py
-│       ├── flag_reader.py
-│       ├── generate_all_eval_plots.py
-│       ├── model_maker.py
-│       ├── parameters.py
-│       ├── train.py
-│       ├── evaluation_results/
-│       │   ├── _MLP_20250728_010501.png
-│       │   ├── mae_distribution_MLP_20250728_010501.png
-│       │   ├── mse_distribution_MLP_20250728_010501.png
-│       │   ├── mse_summary_errorbar_MLP_20250728_010501.png
-│       │   ├── spectrum_comparison_0.png
-│       │   ├── spectrum_comparison_10.png
-│       │   ├── spectrum_comparison_100.png
-│       │   └── spectrum_comparison_500.png
-│       └── utils/
-│           ├── data_reader.py
-│           ├── evaluation_helper.py
-│           ├── get_mse_list.py
-│           ├── get_outcome_stats.py
-│           ├── helper_functions.py
-│           ├── plot_swipe.py
-│           ├── plotsAnalysis.py
-│           ├── time_recorder.py
-│           └── total_training_time.py
-├── metrics.py
-├── LICENSE
-├── pyproject.toml
-├── setup.py
-└── README.md
+![MAE Distribution](plots/mae_distribution.png)
+
+- **Interpretation**: Majority of samples have MAE around **0.2**, indicating high prediction accuracy.
+- Smooth bell-shaped distribution → model generalizes well.
+
+---
+
+
+![MSE Distribution](plots/mse_distribution.png)
+
+- **Interpretation**: Most MSE values fall between **0.05–0.08**.
+- Some long-tail outliers → geometry samples that are harder to model.
+
+---
+
+
+These plots compare ground truth vs predicted spectrum for selected samples:
+
+
+![Spec 0](plots/spectrum_comparison_0.png)
+- Captures the trend well.
+- Some loss in high-frequency sharp peaks.
+
+
+![Spec 10](plots/spectrum_comparison_10.png)
+- Excellent peak alignment in mid-to-high frequencies.
+
+
+![Spec 100](plots/spectrum_comparison_100.png)
+- Slight underfitting in mid-frequency regions.
+- Smooth transitions preserved.
+
+
+![Spec 500](plots/spectrum_comparison_500.png)
+- One of the best fits.
+- Very close tracking of amplitude envelope.
+
+---
+
+| Metric | Value   |
+|--------|---------|
+| **MSE** | 0.0645 |
+| **MAE** | 0.2099 |
+
+These values indicate that the MLP forward model captures the spectral behavior with **high fidelity**, even without any convolution or attention-based enhancements.
+
+---
