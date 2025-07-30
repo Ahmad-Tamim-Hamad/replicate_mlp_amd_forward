@@ -113,5 +113,4 @@ These plots compare ground truth vs predicted spectrum for selected samples:
 | **MSE** | 0.0645 |
 | **MAE** | 0.2099 |
 
-These values indicate that the MLP forward model captures the spectral behavior with **high fidelity**, even without any convolution or attention-based enhancements.
 
