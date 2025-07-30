@@ -7,7 +7,7 @@
 - **Inputs (`data_g.csv`)**: 14-dimensional geometry vector
 - **Outputs (`data_s.csv`)**: 2001-dimensional spectral response vector (S-parameters)
 
-### MLP Architecture
+### 🧠 MLP Architecture
 - 10 hidden layers with 2000 neurons each
 - Activation: **GELU**
 - Regularization: **Dropout (0.2)** and **BatchNorm**
@@ -15,8 +15,9 @@
 - Trainable Parameters: **40M+**
 
 
-### Full Model Architecture
-```python
+
+```bash
+
 MLP(
   (dropout): Dropout(p=0.2, inplace=False)
   (activation): GELU(approximate='none')
@@ -30,6 +31,10 @@ MLP(
   )
 )
 
+
+```
+
+### Training Configuration
 | Setting              | Value         |
 |---------------------|---------------|
 | Optimizer           | Adam          |
@@ -42,7 +47,9 @@ MLP(
 
 ---
 
+## Results & Analysis
 
+### Training Curve
 
 ![Training Curve](plots/training_curve.png)
 
@@ -52,6 +59,7 @@ MLP(
 
 ---
 
+### MAE Distribution
 
 ![MAE Distribution](plots/mae_distribution.png)
 
@@ -60,6 +68,7 @@ MLP(
 
 ---
 
+### 3️⃣ MSE Distribution
 
 ![MSE Distribution](plots/mse_distribution.png)
 
@@ -68,29 +77,36 @@ MLP(
 
 ---
 
+### 4️⃣ Spectrum Comparison Plots
 
 These plots compare ground truth vs predicted spectrum for selected samples:
 
+#### Sample #0
 
 ![Spec 0](plots/spectrum_comparison_0.png)
 - Captures the trend well.
 - Some loss in high-frequency sharp peaks.
 
+#### Sample #10
 
 ![Spec 10](plots/spectrum_comparison_10.png)
 - Excellent peak alignment in mid-to-high frequencies.
 
+#### Sample #100
 
 ![Spec 100](plots/spectrum_comparison_100.png)
 - Slight underfitting in mid-frequency regions.
 - Smooth transitions preserved.
 
+#### Sample #500
 
 ![Spec 500](plots/spectrum_comparison_500.png)
 - One of the best fits.
 - Very close tracking of amplitude envelope.
 
 ---
+
+## Final Evaluation Metrics
 
 | Metric | Value   |
 |--------|---------|
@@ -99,4 +115,3 @@ These plots compare ground truth vs predicted spectrum for selected samples:
 
 These values indicate that the MLP forward model captures the spectral behavior with **high fidelity**, even without any convolution or attention-based enhancements.
 
----
