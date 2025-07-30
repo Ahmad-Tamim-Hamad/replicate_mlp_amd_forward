@@ -3,11 +3,11 @@
 
 ## Model & Training Overview
 
-### 🔧 Input/Output
+### Input/Output
 - **Inputs (`data_g.csv`)**: 14-dimensional geometry vector
 - **Outputs (`data_s.csv`)**: 2001-dimensional spectral response vector (S-parameters)
 
-### 🧠 MLP Architecture
+### MLP Architecture
 - 10 hidden layers with 2000 neurons each
 - Activation: **GELU**
 - Regularization: **Dropout (0.2)** and **BatchNorm**
