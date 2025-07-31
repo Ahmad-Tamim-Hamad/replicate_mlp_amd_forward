@@ -111,7 +111,8 @@ These plots compare ground truth vs predicted spectrum for selected samples:
 
 | Metric | Value   |
 |--------|---------|
-| **MSE** | 0.0645 |
-| **MAE** | 0.2099 |
+| **MSE**| 0.00159​ |
+| **MAE** | 0.02344|
+
 
 
