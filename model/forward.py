@@ -20,8 +20,8 @@ class ForwardModel:
             self.model = MLP(
                 linear_layers=parameters.LINEAR,
                 dropout=parameters.DROPOUT,
-                skip_connection=True,
-                skip_head=2,
+                skip_connection=parameters.SKIP_CONNECTION,
+                skip_head=parameters.SKIP_HEAD,
             )
         elif parameters.MODEL_TYPE == "Transformer":
             self.model = TransformerForwardModel(
@@ -43,10 +43,12 @@ class ForwardModel:
             lr=parameters.LEARN_RATE,
             weight_decay=parameters.REG_SCALE,
         )
-        self.scheduler = torch.optim.lr_scheduler.StepLR(
+        self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             self.optimizer,
-            step_size=parameters.EVAL_STEP,
-            gamma=parameters.LR_DECAY_RATE,
+            mode="min",
+            factor=parameters.LR_DECAY_RATE,
+            patience=10,
+            verbose=True,
         )
 
         self.best_loss = float("inf")
@@ -77,7 +79,6 @@ class ForwardModel:
                 self.optimizer.step()
                 total_loss += loss.item()
 
-            self.scheduler.step()
             avg_loss = total_loss / len(train_loader)
             print(
                 f"Step [{step+1}/{parameters.TRAIN_STEP}] - Train Loss: {avg_loss:.6f}"
@@ -89,6 +90,8 @@ class ForwardModel:
 
                 training_losses.append(avg_loss)
                 validation_losses.append(val_loss)
+
+                self.scheduler.step(val_loss)  # <-- Updated for ReduceLROnPlateau
 
                 if val_loss < self.best_loss:
                     self.best_loss = val_loss
