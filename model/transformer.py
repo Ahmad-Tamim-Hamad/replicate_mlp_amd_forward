@@ -51,7 +51,7 @@ class TransformerForwardModel(nn.Module):
         self.output_proj = nn.Linear(hidden_dim, output_dim)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = self.input_proj(x).unsqueeze(1)  # Shape: [B, 1, H]
+        x = self.input_proj(x).unsqueeze(1) 
         if self.use_positional_encoding:
             x = x + self.positional_encoding  # Add learnable positional encoding
         x = self.transformer(x).squeeze(1)  # Shape: [B, H]

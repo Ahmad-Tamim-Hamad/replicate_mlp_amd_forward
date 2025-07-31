@@ -35,15 +35,16 @@ MLP(
 ```
 
 ### Training Configuration
-| Setting              | Value         |
+| Setting             | Value         |
 |---------------------|---------------|
 | Optimizer           | Adam          |
-| Learning Rate       | 1e-3          |
+| Learning Rate       | 1e-4          |
 | Batch Size          | 256           |
-| Weight Decay        | 1e-5          |
+| STOPE_THRESHOLD     | Le-6          |          
 | LR Decay (plateau)  | 0.5           |
-| Max Epochs          | 500           |
-| Early Stopping Patience | 50       |
+| TRAIN_STEP          | 1000          |
+| EVAL_STEP           | 10            |
+| TEST_RATIO          | 0.2           |
 
 ---
 
